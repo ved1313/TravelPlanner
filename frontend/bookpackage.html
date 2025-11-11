@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Your Package | Travel Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Available Travel Packages</h1>
+
+    <?php
+      // Fetch available packages dynamically
+      $conn = new mysqli("localhost", "root", "", "travel_planner");
+      if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+      }
+
+      $sql = "SELECT package_id, package_name, description, duration, price FROM packages";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+        echo "<div class='package-list'>";
+        while($row = $result->fetch_assoc()) {
+          echo "
+          <div class='package-card'>
+            <h3>{$row['package_name']}</h3>
+            <p>{$row['description']}</p>
+            <p><b>Duration:</b> {$row['duration']} days</p>
+            <p><b>Price:</b> ₹{$row['price']}</p>
+            <form action='bookpackage.php' method='POST'>
+              <input type='hidden' name='package_id' value='{$row['package_id']}'>
+              <input type='submit' value='Book Now'>
+            </form>
+          </div>";
+        }
+        echo "</div>";
+      } else {
+        echo "<p>No packages available at the moment.</p>";
+      }
+
+      $conn->close();
+    ?>
+  </div>
+</body>
+</html>

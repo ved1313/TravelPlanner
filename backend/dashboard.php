@@ -5,47 +5,52 @@ session_start();
 
 $isLoggedIn = isset($_SESSION['user_id']);
 $fname = $isLoggedIn ? htmlspecialchars($_SESSION['fname']) : '';
-
-$html = file_get_contents('../frontend/dashboard.html');
-
-if ($html === false) {
-    die("Could not load dashboard.html — check your path!");
-}
-
-if ($isLoggedIn) {
-    $authButtons = "
-        <span>Welcome, <b>$fname</b></span>
-        <button class='logout' onclick=\"location.href='../backend/logout.php'\">Logout</button>
-    ";
-
-    $contentArea = "
-        <h2>Welcome back, $fname!</h2>
-        <p>Here are your personalized travel options.</p>
-        <div class='btn-group'>
-            <a href='bookpackage.php'>Book a Package</a>
-            <a href='mybookings.php'>View My Bookings</a>
-            <a href='offers.php'>Special Offers</a>
-        </div>
-    ";
-} else {
-    $authButtons = "
-        <button class='signin' onclick=\"location.href='../frontend/signin.html'\">Sign In</button>
-        <button class='create' onclick=\"location.href='../frontend/createaccount.html'\">Create Account</button>
-    ";
-
-    $contentArea = "";
-}
-
-$html = str_replace(
-    [
-        '<div class="header-actions" id="authButtons">',
-        '<main id="contentArea">'
-    ],
-    [
-        '<div class="header-actions" id="authButtons">' . $authButtons,
-        '<main id="contentArea">' . $contentArea
-    ],
-    $html
-);
-echo $html;exit;
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Travel Planner Dashboard</title>
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <header>
+    <div>✈️ Travel Planner Dashboard</div>
+  </header>
+
+  <div class="auth-buttons">
+    <?php if ($isLoggedIn): ?>
+      <span>Welcome, <b><?= $fname ?></b></span>
+      <button class="logout" onclick="location.href='../backend/logout.php'">Logout</button>
+    <?php else: ?>
+      
+    <?php endif; ?>
+  </div>
+
+  <main>
+    <?php if ($isLoggedIn): ?>
+      <div class="dashboard-container">
+        <h2>Welcome back, <?= $fname ?>!</h2>
+        <p>Plan, book, and manage your travel experiences effortlessly.</p>
+
+        <div class="btn-group">
+          <a href="../backend/packages.php">📦 Book a Package</a>
+          <a href="../backend/mybookings.php">📄 View My Bookings</a>
+          <a href="../frontend/offers.html">🎁 Special Offers</a>
+        </div>
+
+        <button class="logout" onclick="location.href='../backend/logout.php'">Logout</button>
+      </div>
+    <?php else: ?>
+      <div class="dashboard-container">
+        <h2>Welcome to Travel Planner!</h2>
+        <p>Sign in or create an account to start planning your adventures.</p>
+        <div class="btn-group">
+          <a href="../frontend/signin.html">🔑 Sign In</a>
+          <a href="../frontend/createaccount.html">📝 Create Account</a>
+        </div>
+      </div>
+    <?php endif; ?>
+  </main>
+</body>
+</html>

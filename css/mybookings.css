@@ -1,0 +1,125 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to right, #74ebd5, #ACB6E5);
+  color: #333;
+}
+
+header {
+  background-color: gold;
+  color: #222;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.container {
+  background: white;
+  max-width: 950px;
+  margin: 40px auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  padding: 40px;
+  text-align: center;
+  animation: fadeIn 0.7s ease-in;
+}
+
+.container h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.container p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+thead {
+  background: #27ae60;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+  background-color: #f2f2f2;
+}
+
+.status {
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+}
+
+.status.pending {
+  background-color: #f39c12;
+}
+
+.status.completed {
+  background-color: #27ae60;
+}
+
+.status.failed {
+  background-color: #e74c3c;
+}
+
+.no-bookings {
+  margin: 40px 0;
+  text-align: center;
+}
+
+.no-bookings a {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #27ae60;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.no-bookings a:hover {
+  background: #1e8449;
+  transform: translateY(-2px);
+}
+
+.btn-group {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-group a {
+  text-decoration: none;
+  background: #2980b9;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.btn-group a:hover {
+  background: #1e6091;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(15px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+@media (max-width: 600px) {
+  .container { width: 90%; padding: 20px; }
+  table { font-size: 14px; }
+}
