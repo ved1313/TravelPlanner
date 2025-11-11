@@ -1,0 +1,85 @@
+-- Create Database
+CREATE DATABASE IF NOT EXISTS travel_planner;
+USE travel_planner;
+
+-- 👤 USERS TABLE
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    fname VARCHAR(50) NOT NULL,
+    lname VARCHAR(50) NOT NULL,
+    email_id VARCHAR(100) UNIQUE NOT NULL,
+    contact_no VARCHAR(15),
+    password VARCHAR(100) NOT NULL,
+    gender VARCHAR(10),
+    houseno VARCHAR(10),
+    street VARCHAR(50),
+    city VARCHAR(50),
+    state VARCHAR(50),
+    pincode VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 🏝 DESTINATIONS TABLE
+CREATE TABLE destinations (
+    destination_id INT AUTO_INCREMENT PRIMARY KEY,
+    destination_name VARCHAR(100) NOT NULL
+);
+
+-- 🏨 HOTELS TABLE
+CREATE TABLE hotels (
+    hotel_id INT AUTO_INCREMENT PRIMARY KEY,
+    hotel_name VARCHAR(100) NOT NULL,
+    rating DECIMAL(2,1) CHECK (rating BETWEEN 0 AND 5)
+);
+
+-- ✈️ FLIGHTS TABLE
+CREATE TABLE flights (
+    flight_id INT AUTO_INCREMENT PRIMARY KEY,
+    airline_name VARCHAR(100) NOT NULL
+);
+
+-- 📦 PACKAGES TABLE (linked to Flight, Hotel, Destination)
+CREATE TABLE packages (
+    package_id INT AUTO_INCREMENT PRIMARY KEY,
+    package_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    duration INT CHECK (duration > 0),  -- in days
+    price DECIMAL(10,2) CHECK (price >= 0),
+    destination_id INT,
+    hotel_id INT,
+    flight_id INT,
+    FOREIGN KEY (destination_id) REFERENCES destinations(destination_id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- 📑 BOOKINGS TABLE (links User → Package)
+CREATE TABLE bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_date DATE DEFAULT (CURRENT_DATE),
+    amount DECIMAL(10,2) CHECK (amount >= 0),
+    user_id INT,
+    package_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (package_id) REFERENCES packages(package_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 💳 PAYMENTS TABLE (links to both Booking and User)
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_method VARCHAR(50),
+    amount DECIMAL(10,2) CHECK (amount >= 0),
+    payment_status ENUM('Pending', 'Completed', 'Failed') DEFAULT 'Pending',
+    booking_id INT,
+    user_id INT,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
