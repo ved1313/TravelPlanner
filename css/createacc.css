@@ -10,6 +10,7 @@ body {
 }
 
 
+
 .container {
   background-color: #ffffff;
   border-radius: 15px;
@@ -19,6 +20,8 @@ body {
   text-align: center;
   animation: fadeIn 1s ease-in-out;
   position: relative;
+    transform: scale(0.8);
+  transform-origin: center;
 }
 
 

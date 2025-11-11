@@ -87,11 +87,11 @@ CREATE TABLE payments (
 
 🏝️ 1. Insert Destinations
 INSERT INTO Destination (destination_name) VALUES
-('Goa'),
-('Manali'),
-('Jaipur'),
-('Kerala'),
-('Ladakh');
+    ('Goa'),
+    ('Manali'),
+    ('Jaipur'),
+    ('Kerala'),
+    ('Ladakh');
 
 🏨 2. Insert Hotels
 INSERT INTO Hotel (hotel_name, rating) VALUES

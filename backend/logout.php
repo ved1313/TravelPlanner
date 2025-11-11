@@ -2,6 +2,6 @@
 session_start();
 session_unset(); 
 session_destroy(); 
-header("Location: ../frontend/signin.html");
+header("Location: ../backend/dashboard.php");
 exit;
 ?>
