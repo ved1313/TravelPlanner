@@ -83,3 +83,63 @@ CREATE TABLE payments (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+🏝️ 1. Insert Destinations
+INSERT INTO Destination (destination_name) VALUES
+('Goa'),
+('Manali'),
+('Jaipur'),
+('Kerala'),
+('Ladakh');
+
+🏨 2. Insert Hotels
+INSERT INTO Hotel (hotel_name, rating) VALUES
+('Taj Goa Resort', 4.8),
+('Snow Valley Inn', 4.5),
+('Jaipur Palace', 4.3),
+('Backwater Breeze', 4.6),
+('Ladakh Heights', 4.7);
+
+✈️ 3. Insert Flights
+INSERT INTO Flight (airline_name) VALUES
+('Air India'),
+('IndiGo'),
+('Vistara'),
+('SpiceJet'),
+('GoAir');
+
+🧳 Step 2: Insert Packages
+
+Now that your supporting tables are filled, you can add packages by referencing their IDs.
+Let’s assume auto-increment IDs start from 1 for each table.
+
+INSERT INTO Package (package_name, description, duration, price, destination_id, hotel_id, flight_id)
+VALUES
+('Goa Summer Getaway', '5 days and 4 nights stay at Taj Goa Resort with return flight and beach activities.', 5, 35000, 1, 1, 1),
+('Manali Winter Escape', '4 nights of snow adventure at Snow Valley Inn with return airfare.', 4, 28000, 2, 2, 2),
+('Royal Jaipur Tour', '3 days in Jaipur with palace visits and cultural shows.', 3, 25000, 3, 3, 3),
+('Kerala Backwater Bliss', '6-day luxurious stay at Backwater Breeze with houseboat cruise.', 6, 40000, 4, 4, 4),
+('Ladakh Adventure Trip', '7-day trip to Ladakh Heights with trekking and sightseeing.', 7, 55000, 5, 5, 5);
+
+
+✅ Result:
+Each Package now automatically connects to a destination, hotel, and flight by their respective IDs.
+
+👤 Step 3: Insert a User (for Testing)
+INSERT INTO User (fname, lname, email_id, contact_no, password, gender, city, state, pincode)
+VALUES ('John', 'Doe', 'john@example.com', '9876543210', '12345', 'Male', 'Mumbai', 'Maharashtra', '400001');
+
+🧾 Step 4: Make a Booking
+
+Say John wants to book the “Goa Summer Getaway” package (package_id = 1):
+
+INSERT INTO Booking (booking_date, amount, user_id, package_id)
+VALUES (CURDATE(), 35000, 1, 1);
+
+💳 Step 5: Add a Payment
+
+Once the booking is done, record the payment:
+
+INSERT INTO Payment (payment_method, amount, payment_status, booking_id, user_id)
+VALUES ('UPI', 35000, 'Success', 1, 1);
