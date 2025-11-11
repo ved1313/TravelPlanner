@@ -11,8 +11,8 @@
         <p>Welcome back! Sign in to plan your next adventure.</p>
 
         <form onsubmit="return validateSignInForm()" action="../backend/signin.php" method="post">
-            <input type="email" name="email_id" placeholder="Email Address" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="email" name="email_id" placeholder="Email Address">
+            <input type="password" name="password" placeholder="Password">
 
             <div class="btn-group">
                 <input type="submit" value="Sign In">
@@ -24,5 +24,6 @@
             Don't have an account? <a href="../frontend/createaccount.html">Create one here</a>
         </footer>
     </div>
+    <script src="../js/signin.js"></script>
 </body>   
 </html>

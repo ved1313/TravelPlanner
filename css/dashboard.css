@@ -1,0 +1,124 @@
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: blanchedalmond;
+      margin: 0;
+    }
+
+    header {
+      background-color: lightblue;
+      padding: 18px 20px;
+      position: relative;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    header p {
+      margin: 6px 0 0 0;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    .header-actions {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .header-actions button {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.2s ease;
+    }
+
+    .signin {
+      background: #03395d;
+      color: #fff;
+    }
+
+    .signin:hover {
+      background: #02273f;
+    }
+
+    .create {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .create:hover {
+      background: #1e8f4e;
+    }
+
+    .logout {
+      background: #b03b2c;
+      color: #fff;
+    }
+
+    .logout:hover {
+      background: #972f23;
+    }
+
+    main {
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    p {
+      color: #555;
+      margin: 8px 0 16px 0;
+    }
+
+    .btn-group a {
+      display: inline-block;
+      margin: 8px;
+      padding: 10px 16px;
+      background-color: #0275d8;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .btn-group a:hover {
+      background-color: #025aa5;
+    }
+
+    footer {
+      background-color: lightgray;
+      padding: 10px;
+      text-align: center;
+      margin-top: 30px;
+    }
+  /* Make the page fill the screen */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make main content expand to push the footer down */
+main {
+  flex: 1;
+}
+
+/* Optional: footer styling */
+footer {
+  background-color: #ccc;
+  text-align: center;
+  padding: 10px;
+}
