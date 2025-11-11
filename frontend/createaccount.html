@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Planner | Create Account</title>
+
+  <!-- Link CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>✈️ Travel Planner</h1>
+    <p>Join us and plan your dream vacations effortlessly!</p>
+
+  <form onsubmit="return validateForm()" action="../backend/createacc.php" method="post">
+      <input type="text" name="fname" placeholder="First Name">
+      <input type="text" name="lname" placeholder="Last Name">
+      <input type="email" name="email_id" placeholder="Email Address">
+      <input type="tel" name="contact_no" placeholder="Contact Number" pattern="[0-9]{10}">
+      <input type="password" name="password" placeholder="Password">
+
+      <div class="gender-section">
+        <label>Gender:</label><br>
+        <input type="radio" name="gender" value="Male"> Male
+        <input type="radio" name="gender" value="Female"> Female
+        <input type="radio" name="gender" value="Other"> Other
+      </div>
+
+      <div class="address-group">
+        <h3>Address Details</h3>
+        <input type="text" name="houseno" placeholder="House No.">
+        <input type="text" name="street" placeholder="Street">
+        <input type="text" name="city" placeholder="City">
+        <input type="text" name="state" placeholder="State">
+        <input type="number" name="pincode" placeholder="Pincode">
+      </div>
+
+      <div class="btn-group">
+        <input type="submit" value="Sign Up">
+        <input type="reset" value="Reset">
+      </div>
+    </form>
+
+    <footer>
+      Already have an account? <a href="../frontend/signin.html">Sign in here</a>
+    </footer>
+  </div>
+  <script src="../js/createaccount.js"></script>
+</body>
+</html>

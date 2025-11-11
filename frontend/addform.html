@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title style="background-position: fixed;">Add Travel Package - Travel Planner</title>
+    <style>
+        label{
+            background-color: gray;
+        }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="assignment.css">
+</head>
+<body>
+    <h2 style="background-color:silver;text-align:center;color:black;">Add Travel Package</h2>
+
+    <form>
+
+        <label>Package Name</label><br>
+        <input type="text" id="packageName" name="packageName" placeholder="Enter package name" required><br><br>
+
+        <label>Select Destination</label><br>
+        <select id="destination" name="destination" required>
+            <option value="">--Select Destination--</option>
+            <option>Paris</option>
+            <option>London</option>
+            <option>New York</option>
+            <option>Tokyo</option>
+            <option>Dubai</option>
+        </select><br><br>
+
+        <label>Duration (Days)</label><br>
+        <input type="number" id="duration" name="duration" min="1" required><br><br>
+
+        <label>Start Date</label><br>
+        <input type="date" id="startDate" name="startDate" required><br><br>
+
+        <label>Travel Mode</label><br>
+        <input type="checkbox" name="mode" value="Flight">Flight<br>
+        <input type="checkbox" name="mode" value="Train">Train<br>
+        <input type="checkbox" name="mode" value="Bus">Bus<br><br>
+
+        <label>Price (INR)</label><br>
+        <input type="number" id="price" name="price" min="1000" max="100000" required><br><br>
+
+        <label>Special Inclusions</label><br>
+        <textarea id="inclusions" name="inclusions" placeholder="Enter details of special inclusions" rows="4"></textarea><br><br>
+
+        <label>Upload Package Image</label><br>
+        <input class="file" id="image" name="image"><br><br>
+
+        <input type="submit" value="Add Package">
+        <input type="reset" value="Clear">
+
+    </form>
+
+</body>
+</html>

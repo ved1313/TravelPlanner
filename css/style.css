@@ -1,0 +1,129 @@
+/* 🌈 Page layout */
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background: linear-gradient(to right, #74ebd5, #ACB6E5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 🧱 Main container */
+.container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 400px;
+  padding: 30px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* ✨ Animation */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* 🧭 Headings */
+h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+/* 🧾 Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* ⚧ Gender section */
+.gender-section {
+  margin: 15px 0;
+  color: #333;
+}
+
+/* 🏠 Address block */
+.address-group {
+  text-align: left;
+  font-size: 0.9rem;
+  margin-top: 15px;
+}
+
+.address-group h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+/* 🚀 Buttons */
+.btn-group {
+  margin-top: 20px;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  border: none;
+  padding: 10px 25px;
+  margin: 5px;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="submit"] {
+  background-color: #27ae60;
+  color: white;
+}
+
+input[type="submit"]:hover {
+  background-color: #219150;
+}
+
+input[type="reset"] {
+  background-color: #e74c3c;
+  color: white;
+}
+
+input[type="reset"]:hover {
+  background-color: #c0392b;
+}
+
+/* 🦶 Footer */
+footer {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+footer a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
