@@ -18,7 +18,9 @@ $result = $conn->query("SELECT package_id, package_name, description, duration, 
   <link rel="stylesheet" href="../frontend/style.css">
 </head>
 <body style="font-family:Poppins; background:linear-gradient(to right,#74ebd5,#ACB6E5);">
+   <button  top="0" left="0" class="home-btn" position="relative" onclick="location.href='../backend/dashboard.php'">🏠</button>
   <header style="background:gold; text-align:center; padding:10px 0;">
+     
     <h1>🌍 Available Travel Packages</h1>
   </header>
 
@@ -32,7 +34,7 @@ $result = $conn->query("SELECT package_id, package_name, description, duration, 
           <p><b>Duration:</b> <?= (int)$row['duration'] ?> days</p>
           <p><b>Price:</b> ₹<?= htmlspecialchars($row['price']) ?></p>
 
-          <form action="bookpackage.php" method="POST">
+          <form action="confirmbooking.php" method="POST">
             <input type="hidden" name="package_id" value="<?= (int)$row['package_id'] ?>">
             <input type="submit" value="Book Now" 
               style="background:#27ae60; color:white; border:none; padding:10px 20px; 
