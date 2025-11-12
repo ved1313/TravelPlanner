@@ -16,7 +16,6 @@ $user_id = $_SESSION['user_id'];
 $conn = new mysqli("localhost", "root", "", "travel_planner");
 if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
 
-// Fetch package price
 $stmt = $conn->prepare("SELECT price FROM packages WHERE package_id = ?");
 $stmt->bind_param("i", $package_id);
 $stmt->execute();
@@ -28,14 +27,12 @@ if ($result->num_rows === 0) {
 $package = $result->fetch_assoc();
 $amount = $package['price'];
 
-// Create booking
 $book = $conn->prepare("INSERT INTO bookings (booking_date, amount, user_id, package_id)
                         VALUES (CURDATE(), ?, ?, ?)");
 $book->bind_param("dii", $amount, $user_id, $package_id);
 $book->execute();
 $booking_id = $book->insert_id;
 
-// Create pending payment
 $pay = $conn->prepare("INSERT INTO payments (payment_method, amount, payment_status, booking_id, user_id)
                        VALUES ('Not Selected', ?, 'Pending', ?, ?)");
 $pay->bind_param("dii", $amount, $booking_id, $user_id);

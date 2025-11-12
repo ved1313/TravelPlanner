@@ -20,7 +20,7 @@ $fname = $isLoggedIn ? htmlspecialchars($_SESSION['fname']) : '';
 
   <div class="auth-buttons">
     <?php if ($isLoggedIn): ?>
-      <span>Welcome, <b><?= $fname ?></b></span>
+      <span><b><?= $fname ?></b></span>
       <button class="logout" onclick="location.href='../backend/logout.php'">Logout</button>
     <?php else: ?>
       

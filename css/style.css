@@ -131,8 +131,8 @@ footer a:hover {
   position: absolute; 
   top: 15px;
   left: 15px;
-  background-color: #fcfcfc;
-  color: white;
+  background-color: #1220dd;
+  color: rgb(49, 32, 161);
   border: none;
   border-radius: 6px;
   padding: 1px 1px;
@@ -143,5 +143,5 @@ footer a:hover {
 }
 
 .home-btn:hover {
-  background-color: #f9f9f9;
+  background-color: #ba1515;
 }
