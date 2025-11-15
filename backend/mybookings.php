@@ -23,7 +23,7 @@ FROM bookings b
 JOIN packages p ON b.package_id = p.package_id
 LEFT JOIN payments pay ON b.booking_id = pay.booking_id
 WHERE b.user_id = ?
-ORDER BY b.booking_date DESC
+ORDER BY b.booking_id DESC
 ";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
