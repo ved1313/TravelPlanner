@@ -1,147 +1,147 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    die("Please log in to complete payment.");
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['package_id'])) {
-    echo "<h3>Invalid Request</h3>";
-    echo "<a href='packages.php'>Back to Packages</a>";
-    exit;
+    die("Please log in to continue.");
 }
 
 $user_id = $_SESSION['user_id'];
-$package_id = (int)$_POST['package_id'];
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die("Invalid request.");
+}
+
+$action = $_POST['action']; // "pay_now" or "pay_later"
 
 $conn = new mysqli("localhost", "root", "", "travel_planner");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
 
-// Fetch price
-$stmt = $conn->prepare("SELECT price FROM packages WHERE package_id = ?");
-if (!$stmt) {
-    die("Prepare failed (select price): " . $conn->error);
-}
-$stmt->bind_param("i", $package_id);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) { die("Package not found."); }
-
-$package = $result->fetch_assoc();
-$amount = $package['price'];
-$stmt->close();
+$isPending = isset($_POST['booking_id']);
 
 
-// ========= 1️⃣ Upload Payment Proof ========= //
-$upload_dir = __DIR__ . "/../uploads/"; // absolute dir
-if (!is_dir($upload_dir)) {
-    if (!mkdir($upload_dir, 0777, true)) {
-        die("Failed to create upload directory.");
-    }
-}
+// =============================
+// PAY LATER
+// =============================
+if ($action === "pay_later") {
 
-$payment_image = null;
-if (isset($_FILES['payment_image']) && $_FILES['payment_image']['error'] === UPLOAD_ERR_OK) {
+    if ($isPending) {
+        $booking_id = (int)$_POST['booking_id'];
 
-    // Basic validation of file type (images only)
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $_FILES['payment_image']['tmp_name']);
-    finfo_close($finfo);
+        $update = $conn->prepare("
+            UPDATE payments 
+            SET payment_method='None', payment_status='Pending'
+            WHERE booking_id=? AND user_id=?
+        ");
+        $update->bind_param("ii", $booking_id, $user_id);
+        $update->execute();
+    } 
+    else {
+        $package_id = (int)$_POST['package_id'];
 
-    $allowed = ['image/png','image/jpeg','image/jpg','image/webp'];
-    if (!in_array($mime, $allowed)) {
-        die("Invalid file type. Please upload a PNG/JPG/WEBP image.");
-    }
+        $stmt = $conn->prepare("SELECT price FROM packages WHERE package_id=?");
+        $stmt->bind_param("i", $package_id);
+        $stmt->execute();
+        $price = $stmt->get_result()->fetch_assoc()['price'];
 
-    $origName = basename($_FILES["payment_image"]["name"]);
-    $ext = pathinfo($origName, PATHINFO_EXTENSION);
-    $filename = time() . "_" . preg_replace('/[^A-Za-z0-9_.-]/', '_', pathinfo($origName, PATHINFO_FILENAME)) . "." . $ext;
-    $target_path = $upload_dir . $filename;
+        $book = $conn->prepare("
+            INSERT INTO bookings (booking_date, amount, user_id, package_id)
+            VALUES (CURDATE(), ?, ?, ?)
+        ");
+        $book->bind_param("dii", $price, $user_id, $package_id);
+        $book->execute();
 
-    if (!move_uploaded_file($_FILES["payment_image"]["tmp_name"], $target_path)) {
-        die("Failed to move uploaded file.");
+        $booking_id = $book->insert_id;
+
+        $pay = $conn->prepare("
+            INSERT INTO payments (payment_method, amount, payment_status, booking_id, user_id)
+            VALUES ('None', ?, 'Pending', ?, ?)
+        ");
+        $pay->bind_param("dii", $price, $booking_id, $user_id);
+        $pay->execute();
     }
 
-    $payment_image = $filename; // store filename, not full path
-} else {
-    // No file uploaded or upload error
-    $err = $_FILES['payment_image']['error'] ?? 'no file';
-    die("Payment proof upload failed (error: {$err}). Please go back and try again.");
+    echo "
+    <html><body style='text-align:center;margin-top:80px;font-family:Poppins;'>
+        <h2>📌 Booking Saved</h2>
+        <p>Your booking has been created with <b>Pending Payment</b>.</p>
+        <a href='mybookings.php'>View My Bookings</a>
+    </body></html>";
+    exit;
 }
 
 
-// ========= 2️⃣ Create Booking Record ========= //
-$bookSql = "
-    INSERT INTO bookings (booking_date, amount, user_id, package_id)
-    VALUES (CURDATE(), ?, ?, ?)
-";
-$book = $conn->prepare($bookSql);
-if (!$book) {
-    die("Prepare failed (insert booking): " . $conn->error);
+// =============================
+// PAY NOW
+// =============================
+
+$upload_dir = "../uploads/";
+if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+
+$img = $_FILES['payment_image'];
+if ($img['error'] !== 0) die("Upload failed.");
+
+$filename = time() . "_" . basename($img['name']);
+move_uploaded_file($img['tmp_name'], $upload_dir . $filename);
+
+if ($isPending) {
+
+    $booking_id = (int)$_POST['booking_id'];
+
+    $update = $conn->prepare("
+        UPDATE payments 
+        SET payment_method='Online', payment_status='Completed', proof_image=? 
+        WHERE booking_id=? AND user_id=?
+    ");
+    $update->bind_param("sii", $filename, $booking_id, $user_id);
+    $update->execute();
+
 }
-$book->bind_param("dii", $amount, $user_id, $package_id);
-if (!$book->execute()) {
-    die("Execute failed (insert booking): " . $book->error);
+else {
+
+    $package_id = (int)$_POST['package_id'];
+
+    $stmt = $conn->prepare("SELECT price FROM packages WHERE package_id=?");
+    $stmt->bind_param("i", $package_id);
+    $stmt->execute();
+    $price = $stmt->get_result()->fetch_assoc()['price'];
+
+    $book = $conn->prepare("
+        INSERT INTO bookings (booking_date, amount, user_id, package_id)
+        VALUES (CURDATE(), ?, ?, ?)
+    ");
+    $book->bind_param("dii", $price, $user_id, $package_id);
+    $book->execute();
+
+    $booking_id = $book->insert_id;
+
+    $pay = $conn->prepare("
+        INSERT INTO payments (payment_method, amount, payment_status, booking_id, user_id, proof_image)
+        VALUES ('Online', ?, 'Completed', ?, ?, ?)
+    ");
+    $pay->bind_param("diis", $price, $booking_id, $user_id, $filename);
+    $pay->execute();
 }
-$booking_id = $book->insert_id;
-$book->close();
 
-
-// ========= 3️⃣ Insert Payment Record (Completed) ========= //
-// Note: ensure `payments` table has `proof_image` column (VARCHAR)
-$paySql = "
-    INSERT INTO payments (payment_method, amount, payment_status, booking_id, user_id, proof_image)
-    VALUES (?, ?, ?, ?, ?, ?)
-";
-$pay = $conn->prepare($paySql);
-if (!$pay) {
-    die("Prepare failed (insert payment): " . $conn->error);
-}
-
-$method = 'Online';
-$status = 'Completed';
-// bind types: s = string (method), d = double(amount), s = string(status) -> but placeholders order below
-// Our placeholders: method (s), amount (d), status (s), booking_id (i), user_id (i), proof_image (s)
-$pay->bind_param("sdsiis", $method, $amount, $status, $booking_id, $user_id, $payment_image);
-
-// Execute and check
-if (!$pay->execute()) {
-    die("Execute failed (insert payment): " . $pay->error);
-}
-$pay->close();
-
-$conn->close();
-
-// ========= 4️⃣ Confirmation page ========= //
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Payment Successful</title>
-  <style>
-    body { font-family: Poppins, sans-serif; background: linear-gradient(to right,#74ebd5,#ACB6E5); text-align:center; margin-top:80px;}
-    .card { background:white; width:480px; margin: auto; padding:30px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.15); }
-    img { max-width:90%; border-radius:8px; margin-top:12px; }
-    a { display:inline-block; margin-top:18px; padding:10px 18px; background:#27ae60; color:#fff; border-radius:8px; text-decoration:none;}
-    a:hover { background:#1e8449; }
-  </style>
+<meta charset="UTF-8">
+<title>Payment Successful</title>
+<style>
+body { font-family:Poppins; background:linear-gradient(to right,#74ebd5,#ACB6E5); text-align:center; padding-top:80px; }
+.card { background:white; width:420px; margin:auto; padding:30px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.2); }
+img { width:90%; border-radius:8px; }
+a { margin-top:15px; display:inline-block; padding:10px 20px; background:#27ae60; color:white; border-radius:8px; text-decoration:none; }
+a:hover { background:#1e8449; }
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h2>🎉 Payment Successful!</h2>
-    <p>Your booking is confirmed.</p>
-    <p><strong>Booking ID:</strong> <?= htmlspecialchars($booking_id) ?></p>
-    <p><strong>Amount Paid:</strong> ₹<?= htmlspecialchars(number_format($amount,2)) ?></p>
-    <p><strong>Status:</strong> <span style="color:green;font-weight:600;">Completed</span></p>
-
-    <?php if ($payment_image): ?>
-      <p><strong>Payment Proof:</strong></p>
-      <img src="../uploads/<?= htmlspecialchars($payment_image) ?>" alt="Payment proof">
-    <?php endif; ?>
-
-    <p><a href="mybookings.php">View My Bookings</a></p>
-  </div>
+<div class="card">
+  <h2>🎉 Payment Successful!</h2>
+  <p>Your booking has been updated.</p>
+  <img src="../uploads/<?= $filename ?>">
+  <a href="mybookings.php">View My Bookings</a>
+</div>
 </body>
 </html>

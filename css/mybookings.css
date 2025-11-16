@@ -114,6 +114,22 @@ tr:hover {
   background: #1e6091;
 }
 
+.cancel-btn-sm {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.cancel-btn-sm:hover {
+  background: #c0392b;
+}
+
+
 @keyframes fadeIn {
   from {opacity: 0; transform: translateY(15px);}
   to {opacity: 1; transform: translateY(0);}

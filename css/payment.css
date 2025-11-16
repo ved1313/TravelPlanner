@@ -48,20 +48,22 @@ input[type="file"] {
   transform: translateY(-2px);
 }
 
-.pay-later {
-  background: #f5be0c;
+.pay-later-btn {
+  background: #e67e22;
   color: white;
-  text-decoration: none;
+  border: none;
   padding: 12px 22px;
   border-radius: 8px;
+  cursor: pointer;
   font-size: 16px;
-  transition: 0.2s ease;
+  margin-top: 10px;
+  transition: 0.2s;
 }
 
-.pay-later:hover {
-  background: #d4a20a;
-  transform: translateY(-2px);
+.pay-later-btn:hover {
+  background: #d35400;
 }
+
 
 .cancel-btn {
   background: #e74c3c;

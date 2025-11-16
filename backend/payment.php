@@ -5,53 +5,95 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['package_id'])) {
-    header("Location: packages.php");
-    exit;
-}
-
-$package_id = (int)$_POST['package_id'];
-
 $conn = new mysqli("localhost", "root", "", "travel_planner");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+if ($conn->connect_error) { die("Connection failed: " . $conn->connect_error); }
 
-$stmt = $conn->prepare("SELECT package_name, price FROM packages WHERE package_id = ?");
-$stmt->bind_param("i", $package_id);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
-    die("Package not found.");
+$user_id = $_SESSION['user_id'];
+
+if (isset($_POST['booking_id'])) {
+
+    $booking_id = (int)$_POST['booking_id'];
+
+    $stmt = $conn->prepare("
+        SELECT b.package_id, p.package_name, p.price
+        FROM bookings b
+        JOIN packages p ON b.package_id = p.package_id
+        WHERE b.booking_id = ?
+    ");
+    $stmt->bind_param("i", $booking_id);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+
+    $package_id = $data['package_id'];
+    $package_name = $data['package_name'];
+    $price = $data['price'];
+
+} else if (isset($_POST['package_id'])) {
+
+    $package_id = (int)$_POST['package_id'];
+
+    $stmt = $conn->prepare("SELECT package_name, price FROM packages WHERE package_id = ?");
+    $stmt->bind_param("i", $package_id);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+
+    $package_name = $data['package_name'];
+    $price = $data['price'];
+
+} else {
+    die("Invalid request.");
 }
-$package = $result->fetch_assoc();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Payment | Travel Planner</title>
-  <link rel="stylesheet" href="../css/payment.css">
+<meta charset="UTF-8">
+<title>Payment</title>
+<link rel="stylesheet" href="../css/payment.css">
 </head>
+
 <body>
-  <header>
-    <h1>Complete Your Payment</h1>
-  </header>
+<header>
+  <h1>Complete Your Payment</h1>
+</header>
 
-  <div class="container">
-    <h2><?= htmlspecialchars($package['package_name']); ?></h2>
-    <p><b>Total Amount:</b> ₹<?= htmlspecialchars($package['price']); ?></p>
+<div class="container">
 
-    <form action="bookpackage.php" method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="package_id" value="<?= $package_id; ?>">
+  <h2><?= htmlspecialchars($package_name) ?></h2>
+  <p><b>Amount:</b> ₹<?= $price ?></p>
 
-      <label for="payment_image"><b>Upload Payment Proof:</b></label><br>
-      <input type="file" name="payment_image" id="payment_image" accept="image/*" required><br><br>
+  <!-- PAY NOW -->
+  <form action="bookpackage.php" method="POST" enctype="multipart/form-data">
+      <?php if (isset($booking_id)): ?>
+        <input type="hidden" name="booking_id" value="<?= $booking_id ?>">
+      <?php endif; ?>
 
-      <button type="submit" name="confirm_payment" class="pay-btn">✅ Confirm Payment</button>
-      <a href="dashboard.php" class="pay-later">Pay Later</a>
-      <a href="packages.php" class="cancel-btn">❌ Cancel</a>
-    </form>
-  </div>
+      <input type="hidden" name="package_id" value="<?= $package_id ?>">
+      <input type="hidden" name="action" value="pay_now">
+
+      <label>Upload Payment Proof:</label><br>
+      <input type="file" name="payment_image" accept="image/*" required><br><br>
+
+      <button class="pay-btn">Pay Now</button>
+  </form>
+
+  <hr><br>
+
+  <!-- PAY LATER -->
+  <form action="bookpackage.php" method="POST">
+      <?php if (isset($booking_id)): ?>
+          <input type="hidden" name="booking_id" value="<?= $booking_id ?>">
+      <?php endif; ?>
+
+      <input type="hidden" name="package_id" value="<?= $package_id ?>">
+      <input type="hidden" name="action" value="pay_later">
+
+      <button class="pay-later-btn">Pay Later</button>
+  </form>
+
+  <a href="mybookings.php" class="cancel-btn">Cancel</a>
+
+</div>
+
 </body>
 </html>

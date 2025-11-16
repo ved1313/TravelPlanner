@@ -17,6 +17,7 @@ SELECT
     b.booking_id,
     b.booking_date,
     b.amount,
+    b.package_id,
     p.package_name,
     pay.payment_status
 FROM bookings b
@@ -39,52 +40,74 @@ $result = $stmt->get_result();
 </head>
 
 <body>
-  <header>
+<header>
     <div>📄 My Bookings</div>
-  </header>
+</header>
 
-  <div class="container">
+<div class="container">
     <h2>Welcome back, <?= htmlspecialchars($_SESSION['fname']); ?>!</h2>
     <p>Here are your booked travel packages.</p>
 
+    <?php if (isset($_GET['deleted'])): ?>
+        <p style="color:red; font-weight:bold;">Booking cancelled successfully.</p>
+    <?php endif; ?>
+
     <?php if ($result->num_rows > 0): ?>
-      <table>
+    <table>
         <thead>
-          <tr>
-            <th>Booking ID</th>
-            <th>Package Name</th>
-            <th>Booking Date</th>
-            <th>Amount (₹)</th>
-            <th>Payment Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
-              <td><?= $row['booking_id'] ?></td>
-              <td><?= htmlspecialchars($row['package_name']) ?></td>
-              <td><?= $row['booking_date'] ?></td>
-              <td><?= number_format($row['amount'], 2) ?></td>
-              <td>
-                <span class="status <?= strtolower($row['payment_status']) ?>">
-                  <?= htmlspecialchars($row['payment_status']) ?>
-                </span>
-              </td>
+                <th>Booking ID</th>
+                <th>Package Name</th>
+                <th>Booking Date</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Cancel</th>
             </tr>
-          <?php endwhile; ?>
+        </thead>
+
+        <tbody>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?= $row['booking_id'] ?></td>
+                <td><?= htmlspecialchars($row['package_name']) ?></td>
+                <td><?= $row['booking_date'] ?></td>
+                <td>₹<?= number_format($row['amount'], 2) ?></td>
+
+                <td>
+                <?php if (strtolower($row['payment_status']) === 'pending'): ?>
+                    <form action="payment.php" method="POST">
+                        <input type="hidden" name="booking_id" value="<?= $row['booking_id'] ?>">
+                        <button class="pay-now-btn">Pay Now</button>
+                    </form>
+                <?php else: ?>
+                    <span class="status completed">Completed</span>
+                <?php endif; ?>
+                </td>
+
+                <td>
+                    <form action="delete.php" method="POST" 
+                          onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                        <input type="hidden" name="booking_id" value="<?= $row['booking_id'] ?>">
+                        <button class="cancel-btn-sm">Cancel</button>
+                    </form>
+                </td>
+
+            </tr>
+        <?php endwhile; ?>
         </tbody>
-      </table>
+    </table>
+
     <?php else: ?>
-      <div class="no-bookings">
-        <p>😕 You haven’t booked any packages yet.</p>
-        <a href="packages.php">Book Your First Trip ✈️</a>
-      </div>
+        <div class="no-bookings">
+            <p>No bookings yet.</p>
+            <a href="packages.php">Book a Package</a>
+        </div>
     <?php endif; ?>
 
     <div class="btn-group">
-      <a href="dashboard.php">🏠 Back to Dashboard</a>
-      <a href="packages.php">➕ Book Another Package</a>
+        <a href="dashboard.php">Back to Dashboard</a>
+        <a href="packages.php">Book Another Package</a>
     </div>
-  </div>
+</div>
 </body>
 </html>
